@@ -28,7 +28,7 @@ export class UI {
         context.font = this.fontSize * 0.5 + 'px ' + this.fontFamily;
         context.fillStyle = this.game.fontColor;
         context.fillText('Press Arrow Keys to Move and Jump', 625, 25);
-        context.fillText('Space to roll (i-frames)', 625, 50);
+        context.fillText('Press Space to Roll (i-frames)', 625, 50);
         context.fillText('Press R to Restart', 625, 75);
         context.font = this.fontSize * 0.6 + 'px ' + this.fontFamily;
         context.fillText('You must score 25 points in 30 seconds to win.', 185, 35);
