@@ -29,8 +29,9 @@ export class Sitting extends State {
     handleInput(input){
         if (input.includes('ArrowLeft') || input.includes('ArrowRight')){
             this.game.player.setState(states.RUNNING, 1);
-        } else if (input.includes('Enter')){
+        } else if (this.game.input.wasJustPressed(' ') && this.game.player.canRoll()){
             this.game.player.setState(states.ROLLING, 2);
+            this.game.player.startRoll();
         }
     }
 }
@@ -51,8 +52,9 @@ export class Running extends State {
             this.game.player.setState(states.SITTING, 0);
         } else if (input.includes('ArrowUp')){
             this.game.player.setState(states.JUMPING, 1);
-        } else if (input.includes('Enter')){
+        } else if (this.game.input.wasJustPressed(' ') && this.game.player.canRoll()){
             this.game.player.setState(states.ROLLING, 2);
+            this.game.player.startRoll();
         }
     }
 }
@@ -70,8 +72,9 @@ export class Jumping extends State {
     handleInput(input){
         if (this.game.player.vy > this.game.player.weight){
             this.game.player.setState(states.FALLING, 1);
-        } else if (input.includes('Enter')){
+        } else if (this.game.input.wasJustPressed(' ') && this.game.player.canRoll()){
             this.game.player.setState(states.ROLLING, 2);
+            this.game.player.startRoll();
         } else if (input.includes('ArrowDown')){
             this.game.player.setState(states.DIVING, 0);
         }
@@ -108,11 +111,19 @@ export class Rolling extends State {
     handleInput(input){
         this.game.particles.unshift(new Fire(this.game, this.game.player.x + this.game.player.width * 0.5,
         this.game.player.y + this.game.player.height));
-        if (!input.includes('Enter') && this.game.player.onGround()){
-            this.game.player.setState(states.RUNNING, 1);
-        } else if (!input.includes('Enter') && !this.game.player.onGround()){
-            this.game.player.setState(states.FALLING, 1);
-        } else if (input.includes('Enter') && input.includes('ArrowUp') && this.game.player.onGround()) {
+        
+        // Roll automatically ends after duration, transition to appropriate state
+        if (this.game.player.rollTimer <= 0) {
+            if (this.game.player.onGround()){
+                this.game.player.setState(states.RUNNING, 1);
+            } else {
+                this.game.player.setState(states.FALLING, 1);
+            }
+            return;
+        }
+        
+        // Handle other inputs during roll
+        if (input.includes(' ') && input.includes('ArrowUp') && this.game.player.onGround()) {
             this.game.player.vy -= 27;
         } else if (input.includes('ArrowDown') && !this.game.player.onGround()){
             this.game.player.setState(states.DIVING, 0);
@@ -139,8 +150,9 @@ export class Diving extends State {
                 this.game.particles.unshift(new Splash(this.game, this.game.player.x + this.game.player.width * 0.5, 
                 this.game.player.y + this.game.player.height));
             }
-        } else if (input.includes('Enter') && !this.game.player.onGround()){
+        } else if (this.game.input.wasJustPressed(' ') && !this.game.player.onGround() && this.game.player.canRoll()){
             this.game.player.setState(states.ROLLING, 2);
+            this.game.player.startRoll();
         } 
     }
 }

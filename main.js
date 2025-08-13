@@ -29,7 +29,7 @@ window.addEventListener('load', function(){
             this.enemyTimer = 0;
             this.enemyInterval = 1000;
             this.debug = false;
-            this.winningScore = 40;
+            this.winningScore = 25;
             this.score = 0;
             this.fontColor = 'black';
             this.time = 0;
@@ -39,6 +39,57 @@ window.addEventListener('load', function(){
             this.player.currentState = this.player.states[0];
             this.player.currentState.enter();
         }
+
+        reset(){
+            // Stop current animation loop
+            if (window.gameVars.animationId) {
+                cancelAnimationFrame(window.gameVars.animationId);
+                window.gameVars.animationId = null;
+            }
+            
+            // Reset all game properties to initial state
+            this.speed = 0;
+            this.enemies = [];
+            this.particles = [];
+            this.collisions = [];
+            this.floatingMessages = [];
+            this.enemyTimer = 0;
+            this.score = 0;
+            this.time = 0; // This should fix the timer issue
+            this.gameOver = false;
+            this.lives = 5;
+            
+            // Reset player completely
+            this.player.x = 0;
+            this.player.y = this.height - this.player.height - this.groundMargin;
+            this.player.vy = 0;
+            this.player.speed = 0;
+            this.player.frameX = 0;
+            this.player.frameY = 0;
+            this.player.frameTimer = 0;
+            this.player.rollTimer = 0;
+            this.player.iFrameTimer = 0;
+            this.player.isRolling = false;
+            this.player.hasIFrames = false;
+            
+            // Reset player state to sitting
+            this.player.currentState = this.player.states[0];
+            this.player.currentState.enter();
+            
+            // Reset background
+            this.background = new Background(this);
+            
+            // Reset input handler to clear any held keys
+            this.input.keys = [];
+            this.input.spacePressed = false;
+            
+            // Reset animation timer
+            window.gameVars.lastTime = 0;
+            
+            // Restart animation loop
+            animate(0);
+        }
+
         update(deltaTime){
             this.time += deltaTime;
             if (this.time > this.maxTime) this.gameOver = true;
@@ -102,15 +153,27 @@ window.addEventListener('load', function(){
 
     const game = new Game(canvas.width, canvas.height);
     let lastTime = 0;
+    let animationId = null;
+
+    // Make game accessible to input handler and expose reset variables
+    window.currentGame = game;
+    window.gameVars = { lastTime, animationId };
 
     function animate(timeStamp) {
         const deltaTime = timeStamp - lastTime;
-        console.log(deltaTime)
         lastTime = timeStamp;
+        window.gameVars.lastTime = lastTime;
         ctx.clearRect(0,0,canvas.width, canvas.height)
         game.update(deltaTime);
         game.draw(ctx);
-        if (!game.gameOver) requestAnimationFrame(animate);
+        if (!game.gameOver) {
+            animationId = requestAnimationFrame(animate);
+            window.gameVars.animationId = animationId;
+        } else {
+            animationId = null;
+            window.gameVars.animationId = null;
+        }
     }
+    
     animate(0);
 });

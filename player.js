@@ -23,10 +23,26 @@ export class Player {
         this.states = [new Sitting(this.game), new Running(this.game), new Jumping(this.game),
         new Falling(this.game), new Rolling(this.game), new Diving(this.game), new Hit(this.game)];
         this.currentState = null;
+        
+        // Simple roll system
+        this.rollDuration = 600; // How long the roll lasts (milliseconds)
+        this.rollTimer = 0; // Current roll timer
+        this.canRollAgain = true; // Whether player can initiate a new roll
     }
+    
     update(input, deltaTime){
         this.checkCollision();
         this.currentState.handleInput(input);
+        
+        // Update roll timer
+        if (this.rollTimer > 0) {
+            this.rollTimer -= deltaTime;
+            if (this.rollTimer <= 0) {
+                this.rollTimer = 0;
+                this.canRollAgain = true; // Can roll again when timer expires
+            }
+        }
+        
         // horizontal movement
         this.x += this.speed;
         if (input.includes("ArrowRight") && this.currentState !== this.states[6]) this.speed = this.maxSpeed;
@@ -51,18 +67,39 @@ export class Player {
             this.frameTimer += deltaTime;
         }
     }
+    
     draw(context){
         if (this.game.debug) context.strokeRect(this.x, this.y, this.width, this.height);
-        context.drawImage(this.image, this.frameX * this.width, this.frameY * this.height, this.width, this.height, this.x, this.y, this.width, this.height)
+        context.drawImage(this.image, this.frameX * this.width, this.frameY * this.height, this.width, this.height, this.x, this.y, this.width, this.height);
+        
+        // Show roll cooldown if active
+        if (this.rollTimer > 0) {
+            context.fillStyle = 'rgba(255, 0, 0, 0.7)';
+            context.fillRect(this.x, this.y - 10, this.width * (this.rollTimer / this.rollDuration), 5);
+            context.strokeStyle = 'white';
+            context.strokeRect(this.x, this.y - 10, this.width, 5);
+        }
     }
+    
     onGround(){
         return this.y >= this.game.height - this.height - this.game.groundMargin;
     }
+    
     setState(state, speed){
         this.currentState = this.states[state];
         this.game.speed = this.game.maxSpeed * speed;
         this.currentState.enter();
     }
+    
+    canRoll(){
+        return this.canRollAgain && this.rollTimer <= 0;
+    }
+    
+    startRoll(){
+        this.canRollAgain = false;
+        this.rollTimer = this.rollDuration;
+    }
+    
     checkCollision(){
         this.game.enemies.forEach(enemy => {
             if (
@@ -79,7 +116,7 @@ export class Player {
                     this.game.floatingMessages.push(new FloatingMessage('+1', enemy.x, enemy.y, 150, 50));
                 } else {
                     this.setState(6, 0);
-                    this.game.score-=5;
+                    this.game.score-=1;
                     this.game.lives--;
                     if (this.game.lives <= 0) this.game.gameOver = true;
                 }
