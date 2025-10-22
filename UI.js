@@ -39,11 +39,11 @@ export class UI {
             context.textAlign = 'center';
             context.font = this.fontSize * 2 + 'px ' + this.fontFamily;
             if (this.game.score >= this.game.winningScore) {
-                context.fillText('Good Shit', this.game.width * 0.5, this.game.height * 0.5 - 20);
+                context.fillText('Good Job', this.game.width * 0.5, this.game.height * 0.5 - 20);
                 context.font = this.fontSize * 0.7 + 'px ' + this.fontFamily;
-                context.fillText('You May Be a God', this.game.width * 0.5, this.game.height * 0.5 + 20);
+                context.fillText('You are an Expert', this.game.width * 0.5, this.game.height * 0.5 + 20);
             } else {
-                context.fillText('Git Gud', this.game.width * 0.5, this.game.height * 0.5 - 20);
+                context.fillText('You Lost', this.game.width * 0.5, this.game.height * 0.5 - 20);
                 context.font = this.fontSize * 0.7 + 'px ' + this.fontFamily;
                 context.fillText('You Got This..', this.game.width * 0.5, this.game.height * 0.5 + 20);
             }

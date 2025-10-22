@@ -29,7 +29,7 @@ window.addEventListener('load', function(){
             this.enemyTimer = 0;
             this.enemyInterval = 1000;
             this.debug = false;
-            this.winningScore = 25;
+            this.winningScore = 40;
             this.score = 0;
             this.fontColor = 'black';
             this.time = 0;
@@ -55,11 +55,11 @@ window.addEventListener('load', function(){
             this.floatingMessages = [];
             this.enemyTimer = 0;
             this.score = 0;
-            this.time = 0; // This should fix the timer issue
+            this.time = 0;
             this.gameOver = false;
             this.lives = 5;
             
-            // Reset player completely
+            // Reset player completely with correct properties
             this.player.x = 0;
             this.player.y = this.height - this.player.height - this.groundMargin;
             this.player.vy = 0;
@@ -68,9 +68,7 @@ window.addEventListener('load', function(){
             this.player.frameY = 0;
             this.player.frameTimer = 0;
             this.player.rollTimer = 0;
-            this.player.iFrameTimer = 0;
-            this.player.isRolling = false;
-            this.player.hasIFrames = false;
+            this.player.canRollAgain = true; // Fix the roll issue
             
             // Reset player state to sitting
             this.player.currentState = this.player.states[0];
@@ -81,7 +79,7 @@ window.addEventListener('load', function(){
             
             // Reset input handler to clear any held keys
             this.input.keys = [];
-            this.input.spacePressed = false;
+            this.input.justPressed.clear();
             
             // Reset animation timer
             window.gameVars.lastTime = 0;
