@@ -21,7 +21,7 @@ Created with the help of tutorials by [Franks laboratory](https://www.youtube.co
 HTML Canvas • CSS • JavaScript • GitHub Pages (Hosting)  
 
 ## Author
-Alex Bahler (contact [at] alexbahler [dot] com)
+Alex Bahler — contact [at] alexbahler [dot] com
 
 ## Acknowledgements
 Huge thanks to [Franks laboratory](https://www.youtube.com/playlist?list=PLYElE_rzEw_uryBrrzu2E626MY4zoXvx2) on YouTube for the very helpful tutorials!
