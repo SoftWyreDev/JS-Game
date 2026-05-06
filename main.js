@@ -29,7 +29,7 @@ window.addEventListener('load', function(){
             this.enemyTimer = 0;
             this.enemyInterval = 1000;
             this.debug = false;
-            this.winningScore = 40;
+            this.winningScore = 25;
             this.score = 0;
             this.fontColor = 'black';
             this.time = 0;
